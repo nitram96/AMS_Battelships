@@ -12,6 +12,7 @@
  *  Author: martin
  */ 
 #include "game.h"
+#include "helpFunc.h"
 
 
 
@@ -37,106 +38,127 @@
 	//bool hit(cordinate);
 	//
 //};
-//class ship
-//{
-	//
-	//cordinate startCord, endCord;
-	//bool sunk;
-	//bool checkCord(cordinate);
-	//direction dir;
-	//public:
-	//ship(cordinate,cordinate);
-	//cordinate getStartCord();
-	//cordinate getEndCord();
-	//void changeCord(cordinate,cordinate);
-	//bool hit(cordinate);
-//
-//};
 
-ship::ship(cordinate _startCord, cordinate _endCord)
+
+ship::ship(uint8_t _startCord, uint8_t _endCord)
 {
 	startCord = _startCord;
 	endCord = _endCord;
 	sunk = false;
-	if (startCord.xCord == endCord.xCord)
+	if (compareXCord(startCord,endCord) == 0)
 	{
-		if(startCord.yCord >> endCord.yCord)
+		if(compareYCord(startCord,endCord) == 1){
 			dir = south;
-		else
-			dir = north; 
+			HitPoints = getYCord(startCord)-getYCord(endCord)+1;
+		}
+		else{
+			dir = north;
+			HitPoints = getYCord(endCord)-getYCord(startCord)+1;
+		}
 	}
 	else
 	{
-		if(startCord.xCord >> endCord.xCord)
+		if(compareXCord(startCord,endCord) == 1){
 			dir = west;
-		else
+			HitPoints = getXCord(startCord)-getXCord(endCord)+1;
+		}
+		else{
 			dir = east;
+			HitPoints = getXCord(endCord)-getXCord(startCord)+1;
+		}
 	}
 	
+	
+	
 }
-cordinate ship::getStartCord()
+uint8_t ship::getStartCord()
 {
 	return startCord;
 }
 
-cordinate ship::getEndCord()
+uint8_t ship::getEndCord()
 {
 	return endCord;
 }
 
-void ship::changeCord(cordinate _startCord,cordinate _endCord)
+void ship::changeCord(uint8_t _startCord,uint8_t _endCord)
 {
 	startCord = _startCord;
 	endCord = _endCord;
 }
 
-bool ship::hit(cordinate missilCord)
+bool ship::hit(uint8_t missilCord)
 {
-	if (checkCord(missilCord))
+	if (checkCord(missilCord)){
+		HitPoints -= 1;
+		if(HitPoints == 0)
+			sunk = true;
 		return true;
+	}
 	else
 		return false;
 }
 
-bool ship::checkCord(cordinate _cords)
+bool ship::checkCord(uint8_t _cord)
 {
-	uint8_t dxCurrent,dyCurrent,dx,dy, crossProd;
-	dxCurrent = _cords.xCord - startCord.xCord;
-	dyCurrent = _cords.yCord - startCord.yCord;
-	
-	dx = endCord.xCord - startCord.xCord;
-	dy = endCord.yCord - startCord.yCord;
-	
-	crossProd = (dxCurrent*dy)-(dyCurrent*dx);
-	
-	if(crossProd != 0)
-		return false;
-	else
-	{
 	switch(dir)
 	{
 		case north:
-			if(_cords.yCord >> startCord.yCord && _cords.yCord << endCord.yCord)
-				return true;
+			if(compareXCord(startCord,_cord) == 0)
+			{
+				if(compareYCord(_cord,startCord) == -1)
+					return false;
+				else
+				if(compareYCord(_cord,endCord) == 1)
+					return false;
+				else
+					return true;
+			}
 			else
 				return false;
+		
 		case south:
-			if(_cords.yCord << startCord.yCord && _cords.yCord >> endCord.yCord)
-				return true;
+			if(compareXCord(startCord,_cord) == 0)
+			{
+				if(compareYCord(_cord,startCord) == 1)
+					return false;
+				else
+				if(compareYCord(_cord,endCord) == -1)
+					return false;
+				else
+					return true;
+			}
 			else
 				return false;
 		case east:
-			if(_cords.xCord >> startCord.xCord && _cords.xCord << endCord.xCord)
-				return true;
+			if(compareYCord(startCord,_cord) == 0)
+			{
+				if(compareXCord(_cord,startCord) == -1)
+					return false;
+				else
+				if(compareXCord(_cord,endCord) == 1)
+					return false;
+				else
+					return true;
+			}
 			else
 				return false;
 		case west:
-			if(_cords.xCord << startCord.xCord && _cords.xCord >> endCord.xCord)
-				return true;
+			if(compareYCord(startCord,_cord) == 0)
+			{
+				if(compareXCord(_cord,startCord) == 1)
+					return false;
+				else
+				if(compareXCord(_cord,endCord) == -1)
+					return false;
+				else
+					return true;
+			}
 			else
 				return false;
 		default:
 			return false;
 	}
-}		
-}
+	
+}	
+	

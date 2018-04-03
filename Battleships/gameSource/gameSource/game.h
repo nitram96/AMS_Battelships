@@ -9,13 +9,8 @@
 #ifndef GAME_H_
 #define GAME_H_
 
+// enum to make it easier to read/work with the direction of the ship
 enum direction{north,south,east,west};
-
-struct cordinate
-{
-	uint8_t xCord;
-	uint8_t yCord;
-};
 
 //class game
 //{
@@ -39,18 +34,22 @@ struct cordinate
 	//
 //};
 
+// class that we use as ships on the gameboard
 class ship
 {
-	cordinate startCord, endCord;
+	// coordinates expressed as a unsigned int 8 bit long, 4 MSB is y coordinate and 4 LSB is x coordinate
+	uint8_t startCord, endCord;
+	//boolean that expresses whether or not the ship has been sunk  
 	bool sunk;
-	bool checkCord(cordinate);
+	bool checkCord(uint8_t);
 	direction dir;
+	uint8_t HitPoints;
 	public:
-	ship(cordinate,cordinate);
-	cordinate getStartCord();
-	cordinate getEndCord();
-	void changeCord(cordinate,cordinate);
-	bool hit(cordinate);
+	ship(uint8_t,uint8_t);
+	uint8_t getStartCord();
+	uint8_t getEndCord();
+	void changeCord(uint8_t,uint8_t);
+	bool hit(uint8_t);
 
 };
 

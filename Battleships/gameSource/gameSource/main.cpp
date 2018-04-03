@@ -8,40 +8,30 @@
 #define F_CPU 16000000
  
 #include <avr/io.h>
-#include <util/delay.h>
 #include "game.h"
 
 
 int main(void)
 {
-	DDRB |= 0xFF;
-	PORTB = 0;
-    cordinate cord1;
-	cordinate cord2;
-
-	cord1.xCord = 2;
-	cord1.yCord = 4;
-
-	cord2.xCord = 2;
-	cord2.yCord = 7;
-
-	ship hello(cord1,cord2);
-
+	bool temp;
+	char hej[4];
+	ship ship1(0x25,0x28);
 	
+	temp = ship1.hit(0x26);
 	
+	if(temp){
+		hej[0] = 'Y';
+		hej[1] = 'E';
+		hej[2] = 'S';
+	}
+	else{
+		hej[0] = 'N';
+		hej[1] = 'O';
+	}
 	while(1)
 	{
 		
-		if(hello.hit(cord1))
-			PORTB = 0b10000000;
-		else
-			PORTB = 0b00000001;
-		_delay_ms(500);
-		if(cord1.yCord <= 10)
-			cord1.yCord += 1;
-		else
-			cord1.yCord -= 1;
-	}
-	
+	}		
+		
 }
 
