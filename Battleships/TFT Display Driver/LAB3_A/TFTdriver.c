@@ -207,3 +207,20 @@ void FillRectangle(unsigned int StartX, unsigned int StartY, unsigned int Width,
 		}
 	}
 }
+
+
+
+/* BATTLESHIPS Methods */
+
+void drawGameboard()
+{
+	FillRectangle(0, 0, MAX_WIDTH, MAX_HEIGHT, 0, 61, 31);
+}
+
+void drawStats()
+{
+
+}
+
+void drawShip();
+void drawMissiles();

@@ -32,6 +32,7 @@
 #define MAX_HEIGHT				240
 #define MAX_WIDTH				320
 
+/* TFT Display Driver Methods */
 void DisplayInit();
 void AllPixelsOff();
 void AllPixelsOn();
@@ -47,5 +48,13 @@ void MemoryWrite();
 void FillRectangle(unsigned int StartX, unsigned int StartY, unsigned int Width, 
                    unsigned int Height, unsigned char Red, unsigned char Green, unsigned char Blue);
 
+
+
+/* Battleships Game Methods */
+void drawGameboard();
+void drawStats();
+void drawShip();
+void drawMissiles();
+// More?
 
 

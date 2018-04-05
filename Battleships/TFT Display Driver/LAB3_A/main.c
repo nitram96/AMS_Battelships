@@ -10,30 +10,19 @@
 #include <util/delay.h>
 #include "TFTdriver.h"
 
-/*
+
 int main(void)
 {
     DisplayInit();
-	FillRectangle(50,50,100,100,31,0,0);
-	SetColumnAddress(50,100);
-	SetPageAddress(50,200);
 	
-	MemoryWrite();
-	int i;
-	for(i = 0; i<1000;i++)
-		WritePixel(0,0,31);
-	
-	_delay_ms(5000);
 
     while (1) 
     {
-		DisplayOn();
-		_delay_ms(1000);
-		DisplayOff();
-		_delay_ms(1000);
+		drawGameboard();
     }
-}*/
+}
 
+/*
 int main(void)
 {
 	// Initialize the display
@@ -53,5 +42,5 @@ int main(void)
 		DisplayOff();
 		_delay_ms(1000);
 	}
-}
+}*/
 
