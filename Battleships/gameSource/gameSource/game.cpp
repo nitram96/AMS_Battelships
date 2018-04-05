@@ -13,8 +13,19 @@
  */ 
 #include "game.h"
 #include "helpFunc.h"
+#include <string.h>
 
 
+void* operator new(size_t objsize) {
+	return malloc(objsize);
+}
+
+void operator delete(void* obj) {
+	free(obj);
+}
+
+void* operator new[](unsigned int x);
+void operator delete[](void *);
 
 
 //class game
@@ -26,18 +37,48 @@
 	//
 //};
 //
-//class gameBoard
-//{
-	//uint8_t xSize, ySize;
-	//cordinate cordShips[17];
-	//cordinate hitShips[17];
-	//cordinate cordMissil[256];
-	//ship ships[5];
-	//public:
-	//void addShip();
-	//bool hit(cordinate);
-	//
-//};
+
+
+gameBoard::gameBoard(uint8_t _xSize, uint8_t _ySize)
+{
+	if (_xSize >> 15)
+		xSize = 15;
+	else
+		xSize = _xSize;
+	
+	if (_ySize >> 15)
+		ySize = 15; 
+	else
+		ySize = _ySize;
+	
+	memset(cordMissile,0,256);
+	memset(hitShips,0,256);
+	numberOfShips = 0;
+	missileHits = 0;
+	turn = 1;
+}
+
+void gameBoard::addShip(uint8_t _startCord, uint8_t  _endCord)
+{
+	ships[numberOfShips++] = new ship(_startCord,_endCord) ;
+}
+
+bool gameBoard::hit(uint8_t missileCord)
+{
+	cordMissile[turn-1] = missileCord;
+	for(int i = 0; i < numberOfShips; i++)
+	{
+		if(ships[i]->hit(missileCord))
+		{
+			hitShips[missileHits] = missileCord;
+			missileHits++;
+			turn++;	
+			return true;
+		}
+	}
+	turn++;
+	return false;
+}
 
 
 ship::ship(uint8_t _startCord, uint8_t _endCord)

@@ -13,25 +13,10 @@
 
 int main(void)
 {
-	bool temp;
-	char hej[4];
-	ship ship1(0x25,0x28);
-	
-	temp = ship1.hit(0x26);
-	
-	if(temp){
-		hej[0] = 'Y';
-		hej[1] = 'E';
-		hej[2] = 'S';
-	}
-	else{
-		hej[0] = 'N';
-		hej[1] = 'O';
-	}
-	while(1)
-	{
-		
-	}		
+	gameBoard player(10,10);
+
+	player.addShip(0x25,0x28);
+	player.hit(0x26);	
 		
 }
 
