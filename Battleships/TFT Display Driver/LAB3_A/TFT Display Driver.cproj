@@ -13,7 +13,7 @@
     <OutputFileExtension>.elf</OutputFileExtension>
     <OutputDirectory>$(MSBuildProjectDirectory)\$(Configuration)</OutputDirectory>
     <AssemblyName>LAB3_A</AssemblyName>
-    <Name>LAB3_A</Name>
+    <Name>TFT Display Driver</Name>
     <RootNamespace>LAB3_A</RootNamespace>
     <ToolchainFlavour>Native</ToolchainFlavour>
     <KeepTimersRunning>true</KeepTimersRunning>
