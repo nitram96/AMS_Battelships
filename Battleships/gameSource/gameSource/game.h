@@ -12,15 +12,14 @@
 // enum to make it easier to read/work with the direction of the ship
 enum direction{north,south,east,west};
 
-//class game
-//{
-	//gameBoard player, opponent;
-	//
-	//public:
-	//void startGame();
-	//
-//};
-//
+class game
+{
+	
+	public:
+	void startGame();
+	gameBoard player, opponent;	
+};
+
 class ship
 {
 	// coordinates expressed as a unsigned int 8 bit long, 4 MSB is y coordinate and 4 LSB is x coordinate

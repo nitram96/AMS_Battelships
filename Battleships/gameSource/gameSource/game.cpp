@@ -14,6 +14,7 @@
 #include "game.h"
 #include "helpFunc.h"
 #include <string.h>
+#include <stdlib.h>
 
 
 void* operator new(size_t objsize) {
@@ -28,15 +29,17 @@ void* operator new[](unsigned int x);
 void operator delete[](void *);
 
 
-//class game
-//{
-	//gameBoard player, opponent;
-	//
-	//public:
-	//void startGame();
-	//
-//};
-//
+game::startGame()
+{
+	if(player.numberOfShips == 5)
+	{
+		if(opponent.numberOfShips == 5)
+		{
+			
+		}
+	}
+}
+
 
 
 gameBoard::gameBoard(uint8_t _xSize, uint8_t _ySize)
