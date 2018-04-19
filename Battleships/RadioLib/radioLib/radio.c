@@ -16,6 +16,7 @@
 #define DD_MOSI     DDB3
 #define DD_SS       DDB2
 #define DD_SCK      DDB5
+#define IRQ			2
 
 #define LOW_SCK()	PORT_RADIO &= ~(1<<DD_SCK)
 #define HI_SCK()	PORT_RADIO |= (1<<DD_SCK)
@@ -53,8 +54,17 @@ void radioInit()
 
 void radioSend(uint8_t aByte)
 {
-	while(PIND&(1<<2));
+	while(PIND&(1<<IRQ));
 	radioCmd(0xB800+aByte);
+}
+
+uint8_t radioRecieve(void)
+{
+	uint16_t fifoData;
+	while(PIND&(1<<IRQ));
+	radioCmd(0x0000);
+	fifoData=radioCmd(0xB000);
+	return (fifoData&0x00FF);
 }
 
 

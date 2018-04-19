@@ -16,6 +16,7 @@
 void radioInit();
 uint16_t radioCmd(uint16_t);
 void radioSend(uint8_t);
+uint8_t radioRecieve(void);
 void radioTransmit(uint8_t*, uint8_t*,uint8_t);
 
 
