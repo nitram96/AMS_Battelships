@@ -8,14 +8,15 @@
 #include "radio.h"
 #include <avr/io.h>
 #include <avr/interrupt.h>
+#include <avr/cpufunc.h> 
 
 #define PORT_RADIO  PORTB
 #define PIN_RADIO	PINB
 #define DDR_SPI     DDRB
-#define DD_MISO     DDB4
-#define DD_MOSI     DDB3
-#define DD_SS       DDB2
-#define DD_SCK      DDB5
+#define DD_MISO     DDB3
+#define DD_MOSI     DDB2
+#define DD_SS       DDB0
+#define DD_SCK      DDB1
 #define IRQ			2
 
 #define LOW_SCK()	PORT_RADIO &= ~(1<<DD_SCK)
@@ -26,6 +27,39 @@
 #define HI_SS()		PORT_RADIO |= (1<<DD_SS)
 #define LOW_SS()	PORT_RADIO &= ~(1<<DD_SS)
 
+uint16_t radioCmd(uint16_t aCmd)
+{
+	uint8_t i;
+	uint16_t temp = 0;
+	LOW_SCK();
+	LOW_SS();
+	_delay_ms(1);
+	for(i = 0; i<16;i++)
+	{
+		temp <<=1;
+		if(MISO_HI())
+		{
+			temp |=0x0001;
+		}
+		LOW_SCK();
+		if (aCmd&0x8000)
+		{
+			HI_MOSI();
+		}else{
+			LOW_MOSI();
+		}
+		_delay_ms(1);
+		HI_SCK();
+		aCmd<<=1;
+		_delay_ms(1);
+	};
+	LOW_SCK();
+	HI_SS();
+	return (temp);
+}
+
+
+
 void radioInit()
 {		
 	DDR_SPI &= ~((1<<DD_MOSI)|(1<<DD_MISO)|(1<<DD_SS)|(1<<DD_SCK));
@@ -35,21 +69,32 @@ void radioInit()
 	HI_SS();
 	HI_MOSI();
 	LOW_SCK();
+
+	_delay_ms(100);
+	
+	LOW_SS();
+	LOW_MOSI();
+	HI_SCK();
+	
+	_delay_ms(100);
 	
 	radioCmd(0x80D7);
-	radioCmd(0x8239);
-	radioCmd(0xA640);
-	radioCmd(0xC647);
-	radioCmd(0x94A0);
-	radioCmd(0xC2AC);
-	radioCmd(0xCA81);
-	radioCmd(0xCED4);
-	radioCmd(0xC483);
-	radioCmd(0x9850);
-	radioCmd(0xCC67);
-	radioCmd(0xE000);
-	radioCmd(0xC800);
-	radioCmd(0xC400);
+	
+	_delay_ms(100);
+	
+	//radioCmd(0x8239);
+	//radioCmd(0xA640);
+	//radioCmd(0xC647);
+	//radioCmd(0x94A0);
+	//radioCmd(0xC2AC);
+	//radioCmd(0xCA81);
+	//radioCmd(0xCED4);
+	//radioCmd(0xC483);
+	//radioCmd(0x9850);
+	//radioCmd(0xCC67);
+	//radioCmd(0xE000);
+	//radioCmd(0xC800);
+	//radioCmd(0xC400);
 }
 
 void radioSend(uint8_t aByte)
@@ -82,30 +127,3 @@ void radioTransmit(uint8_t* dataout, uint8_t* datain, uint8_t len)
 	}
 }
 
-uint16_t radioCmd(uint16_t aCmd)
-{
-	uint8_t i;
-	uint16_t temp = 0;
-	LOW_SCK();
-	LOW_SS();
-	for(i = 0; i<16;i++)
-	{
-		temp <<=1;
-		if(MISO_HI())
-		{
-			temp |=0x0001;	
-		}
-		LOW_SCK();
-		if (aCmd&0x8000)
-		{
-			HI_MOSI();
-		}else{
-			LOW_MOSI();
-		}
-		HI_SCK();
-		aCmd<<=1;
-	};
-	LOW_SCK();
-	HI_SS();
-	return (temp);
-}
