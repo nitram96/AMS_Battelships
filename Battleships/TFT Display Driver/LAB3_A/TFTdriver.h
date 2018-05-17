@@ -18,6 +18,8 @@
 
   Henning Hargaard, February 14, 2018
 ************************************************************/  
+#include <avr/pgmspace.h>
+
 #define ALL_PIXELS_OFF_CMD		0x22
 #define ALL_PIXELS_ON_CMD		0x23
 #define DISPLAY_OFF_CMD			0x28
@@ -42,11 +44,14 @@ void SleepOut();
 void MemoryAccessControl(unsigned char parameter);
 void InterfacePixelFormat(unsigned char parameter);
 void WritePixel(unsigned char Red, unsigned char Blue, unsigned char Green);
+void writeColor(uint16_t color);
 void SetColumnAddress(unsigned int Start, unsigned int End);
 void SetPageAddress(unsigned int Start, unsigned int End);
 void MemoryWrite();
 void FillRectangle(unsigned int StartX, unsigned int StartY, unsigned int Width, 
                    unsigned int Height, unsigned char Red, unsigned char Green, unsigned char Blue);
+void drawBitmap(int x, int y, const uint16_t bitmap[], int16_t w, int16_t h);
+void writeBitmap(unsigned int x, unsigned int y, uint16_t color);
 
 
 

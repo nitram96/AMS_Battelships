@@ -24,19 +24,29 @@
 #include <util/delay.h>
 #include "TFTdriver.h"
 
-// Data port definitions:
+// TFT Display data port definitions
 #define DATA_PORT_HIGH PORTA
 #define DATA_PORT_LOW  PORTC
 
-// Control port definitions:
+// TFT Display control port definitions
 #define WR_PORT PORTG
 #define WR_BIT 2
 #define DC_PORT PORTD
-#define DC_BIT  7  //"DC" signal is at the shield called RS
+#define DC_BIT  7				// "DC" signal is at the shield called RS
 #define CS_PORT PORTG
 #define CS_BIT  1
 #define RST_PORT PORTG
 #define RST_BIT 0
+
+
+// Define read byte and word for PROGMEM
+#ifndef pgm_read_byte
+#define pgm_read_byte(addr) (*(const unsigned char *)(addr))
+#endif
+#ifndef pgm_read_word
+#define pgm_read_word(addr) (*(const unsigned short *)(addr))
+#endif
+
 
 // LOCAL FUNCTIONS /////////////////////////////////////////////////////////////
 
@@ -162,6 +172,17 @@ void WritePixel(unsigned char Red, unsigned char Green, unsigned char Blue)
 	WriteData(frame);
 }
 
+void writeColor(uint16_t color)
+{
+	uint16_t frame = 0;
+	
+	frame |= (color & 0xF800);
+	frame |= (color & 0x7E0);
+	frame |= (color & 0x1F);
+	
+	WriteData(frame);
+}
+
 // Set Column Address (0-239), Start > End
 void SetColumnAddress(unsigned int Start, unsigned int End)
 {
@@ -208,6 +229,36 @@ void FillRectangle(unsigned int StartX, unsigned int StartY, unsigned int Width,
 	}
 }
 
+// Draws a 16-bit bitmap saved in PROGMEM using pgm_read_word and writeBitmap()
+void drawBitmap(int x, int y, const uint16_t bitmap[], int16_t w, int16_t h)
+{
+	uint16_t word = 0;
+
+	for(int16_t j=0; j<h; j++, y++)
+	{
+		for(int16_t i=0; i<w; i++)
+		{
+			word   = pgm_read_word(&bitmap[j * w + i]);
+			if(word != 0xFFFF) writeBitmap(x+i, y, word);
+		}
+	}
+}
+
+
+// Sets location of the bitmap in PROGMEM and writes each pixel with their respective 16-bit color
+void writeBitmap(unsigned int x, unsigned int y, uint16_t color)
+{
+	if((x < 0) || (x >= MAX_WIDTH) || (y < 0) || (y >= MAX_HEIGHT)) return;
+	SetPageAddress(x,x+1);
+	SetColumnAddress(y,y+1);
+	MemoryWrite();
+	writeColor(color);
+}
+
+
+
+
+
 
 
 /* BATTLESHIPS Methods */
@@ -215,12 +266,15 @@ void FillRectangle(unsigned int StartX, unsigned int StartY, unsigned int Width,
 void drawGameboard()
 {
 	FillRectangle(0, 0, MAX_WIDTH, MAX_HEIGHT, 0, 61, 31);
+	
 }
 
 void drawStats()
 {
-
+	
 }
 
 void drawShip();
 void drawMissiles();
+
+
