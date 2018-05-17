@@ -138,10 +138,10 @@
     <Compile Include="main.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="radio.c">
+    <Compile Include="spiLib.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="radio.h">
+    <Compile Include="spiLib.h">
       <SubType>compile</SubType>
     </Compile>
   </ItemGroup>

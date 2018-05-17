@@ -7,16 +7,16 @@
 #define F_CPU 16000000
 
 #include <avr/io.h>
-#include "radio.h"
+#include "spiLib.h"
 
 int main(void)
 {
+	spiMasterInit();
 	
-	
-	radioInit();
-    /* Replace with your application code */
-    while (1) 
-    {
-    }
+	while(1)
+	{
+	spiTransmit(0x40);
+	_delay_ms(1000);
+	}
 }
 
