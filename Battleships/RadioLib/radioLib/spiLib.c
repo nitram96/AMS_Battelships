@@ -6,18 +6,7 @@
  */ 
 
 #include "spiLib.h"
-#include <avr/io.h>
-#include <avr/interrupt.h>
-#include <avr/cpufunc.h> 
 
-#define PORT_SPI  PORTB
-#define PIN_SPI	PINB
-#define DDR_SPI     DDRB
-#define DD_MISO     DDB3
-#define DD_MOSI     DDB2
-#define DD_SS       DDB0
-#define DD_SCK      DDB1
-#define IRQ			2
 
 //#define LOW_SCK()	PORT_RADIO &= ~(1<<DD_SCK)
 //#define HI_SCK()	PORT_RADIO |= (1<<DD_SCK)
@@ -67,18 +56,23 @@ void spiSlaveInit()
 //}
 
 
-
-
-
 uint8_t spiTransmit(uint8_t dataout)
 {
-	PORT_SPI |= (1<<6);
-	PORT_SPI &= ~(1<<DD_SS);
 	SPDR = dataout;
+	PORT_SPI &= ~(1<<DD_SS);
 	while(!(SPSR & (1<<SPIF)));
 	PORT_SPI |= (1<<DD_SS);
-	PORT_SPI &= ~(1<<6);
 	return SPDR;
-	
 }
 
+uint8_t spiReceive(void)
+{
+	while(!(SPSR & (1<<SPIF)));
+	return SPDR;
+}
+
+void spiSend(uint8_t dataout)
+{
+	SPDR = dataout;
+	while(!(SPSR & (1<<SPIF)));
+}
