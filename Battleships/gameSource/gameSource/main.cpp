@@ -5,14 +5,18 @@
  * Author : martin
  */ 
 
+#define F_CPU 16000000
+ 
 #include <avr/io.h>
+#include "game.h"
 
 
 int main(void)
 {
-    /* Replace with your application code */
-    while (1) 
-    {
-    }
+	gameBoard player(10,10);
+
+	player.addShip(0x25,0x28);
+	player.hit(0x26);	
+		
 }
 
