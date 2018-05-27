@@ -12,13 +12,15 @@
 
 int main(void)
 {
+	
+	uint8_t data = 0x50;
 	spiMasterInit();
 	_delay_ms(1000);
 	
 	while(1)
 	{
 	PORT_SPI &= ~(1<<DD_SS);
-	spiTransmit(0x50);
+	data = spiTransmit(++data);
 	PORT_SPI |= (1<<DD_SS);
 	_delay_ms(1000);
 	}

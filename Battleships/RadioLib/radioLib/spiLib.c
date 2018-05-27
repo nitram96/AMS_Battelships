@@ -59,9 +59,7 @@ void spiSlaveInit()
 uint8_t spiTransmit(uint8_t dataout)
 {
 	SPDR = dataout;
-	PORT_SPI &= ~(1<<DD_SS);
 	while(!(SPSR & (1<<SPIF)));
-	PORT_SPI |= (1<<DD_SS);
 	return SPDR;
 }
 
