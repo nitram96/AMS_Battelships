@@ -12,7 +12,10 @@
  *  Author: martin
  */ 
 #include "game.h"
+#include "spiLib.h"
 #include "helpFunc.h"
+#include "FreeRTOS.h"
+#include "task.h"
 #include <string.h>
 #include <stdlib.h>
 
@@ -29,8 +32,68 @@ void* operator new[](unsigned int x);
 void operator delete[](void *);
 
 
-game::startGame()
+game::startGame(bool master,uint8_t x, uint8_t y)
 {
+	
+	if(master)
+	{
+		player.gameBoard(x,y,true);
+		opponent.gameBoard(x,y,false);
+		spiMasterInit();
+		DDR_SPI &= ~(1<<DD_SS);
+		while(spiTransmit(READY) != ACK)
+		{
+			_delay_ms(1000);	
+		}
+		while(spiTransmit(x) != ACK)
+		{
+			_delay_ms(1);
+		}
+		while(spiTransmit(y) != ACK)
+		{
+			_delay_ms(1);
+		}
+		
+		DDR_SPI &= ~(1<<DD_SS);
+		player.addShip();
+		
+		DDR_SPI &= ~(1<<DD_SS);
+		while(spiTransmit(READY) != ACK)
+		{
+			_delay_ms(1000);
+		}
+		DDR_SPI &= ~(1<<DD_SS);
+		
+		
+		opponent.hit(cord);
+		hit = spiTransmit(cord);
+		if(hit == ACK)
+		
+			
+		
+	}
+	else
+	{
+		spiSlaveInit();
+		while(spiReceive() != READY)
+		{
+			_delay_ms(1000);
+		}
+		spiSend(ACK);
+		uint8_t xSize = spiTransmit(ACK);
+		uint8_t ySize = spiTransmit(ACK);
+		player.gameBoard(xSize,ySize,true);
+		opponent.gameBoard(xSize,ySize,false);
+		player.addShip();
+		while(spiReceive() != READY)
+		{
+			_delay_ms(1000);
+		}
+		spiSend(ACK);
+		
+		
+	}
+	
 	if(player.numberOfShips == 5)
 	{
 		if(opponent.numberOfShips == 5)
@@ -42,7 +105,7 @@ game::startGame()
 
 
 
-gameBoard::gameBoard(uint8_t _xSize, uint8_t _ySize)
+gameBoard::gameBoard(uint8_t _xSize, uint8_t _ySize, bool master)
 {
 	if (_xSize >> 15)
 		xSize = 15;
@@ -50,15 +113,31 @@ gameBoard::gameBoard(uint8_t _xSize, uint8_t _ySize)
 		xSize = _xSize;
 	
 	if (_ySize >> 15)
-		ySize = 15; 
+		ySize = 15;
 	else
 		ySize = _ySize;
+
+	MOS = master
+	if (master)
+	{
+		memset(cordMissile,0,256);
+		memset(hitShips,0,17);
+		numberOfShips = 0;
+		missileHits = 0;
+		turn = 1;
+	}
+	else
+	{
+		memset(cordMissile,0,256);
+		memset(hitShips,0,17);
+		missileHits = 0;
+		turn = 1;
+	}
 	
-	memset(cordMissile,0,256);
-	memset(hitShips,0,256);
-	numberOfShips = 0;
-	missileHits = 0;
-	turn = 1;
+
+	
+	
+	
 }
 
 void gameBoard::addShip(uint8_t _startCord, uint8_t  _endCord)

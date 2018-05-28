@@ -16,7 +16,7 @@ class game
 {
 	
 	public:
-	void startGame();
+	void startGame(bool);
 	gameBoard player, opponent;	
 };
 
@@ -45,10 +45,11 @@ class gameBoard
 	uint8_t missileHits;
 	uint8_t cordMissile[256];
 	uint8_t numberOfShips;
+	bool MOS;
 	ship *ships[5];
 	uint8_t turn;
 	public:
-	gameBoard(uint8_t, uint8_t);
+	gameBoard(uint8_t, uint8_t,bool);
 	void addShip(uint8_t,uint8_t);
 	bool hit(uint8_t);
 };
