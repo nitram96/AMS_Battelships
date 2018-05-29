@@ -18,9 +18,10 @@
 
   Henning Hargaard, February 14, 2018
 ************************************************************/  
-#include <avr/io.h> 
+#include <avr/io.h>
 #include <avr/cpufunc.h>
-#define F_CPU 16000000
+#define  F_CPU 16000000
+#include <math.h>
 #include <util/delay.h>
 #include "TFTdriver.h"
 
@@ -213,6 +214,9 @@ void SetPageAddress(unsigned int Start, unsigned int End)
 // R-G-B = 5-6-5 bits.
 void FillRectangle(unsigned int StartX, unsigned int StartY, unsigned int Width, unsigned int Height, unsigned char Red, unsigned char Green, unsigned char Blue)
 {
+	if(StartX < 0 && StartX > 240 && StartY < 0 && StartY > 320)
+		return;
+		
 	SetPageAddress(StartX,StartX+Width);
 	SetColumnAddress(StartY,StartY+Height);
 
@@ -222,12 +226,43 @@ void FillRectangle(unsigned int StartX, unsigned int StartY, unsigned int Width,
 		
 	for(StartY = h; StartY>0; StartY--)
 	{
-		for(StartX = w; StartX>0; StartX--)
+ 		for(StartX = w; StartX>0; StartX--)
 		{
 			WritePixel(Red,Green,Blue);
 		}
 	}
 }
+
+void drawLine(unsigned int StartX, unsigned int StartY, unsigned int EndX, unsigned int EndY, unsigned char Red, unsigned char Green, unsigned char Blue)
+{
+	int x = EndX-StartX;
+	int y = EndY-StartY;
+	int dx = abs(x), sx = StartX<EndX ? 1 : -1;
+	int dy = -abs(y), sy = StartY<EndY ? 1 : -1;
+	int err = dx+dy, e2;			// error value e_xy
+	for (;;)
+	{
+		SetPageAddress(StartX,StartX);
+		SetColumnAddress(StartY,StartY);
+		MemoryWrite();
+		WritePixel(Red, Green, Blue);
+		e2 = 2*err;
+		if (e2 >= dy)			// e_xy+e_x > 0
+		{
+			if (StartX == EndX)
+			break;
+			err += dy;
+			StartX += sx;
+		}
+		if (e2 <= dx)	 		// e_xy+e_y < 0
+		{
+			if (StartY == EndY) break;
+			err += dx;
+			StartY += sy;
+		}
+	}
+}
+
 
 // Draws a 16-bit bitmap saved in PROGMEM using pgm_read_word and writeBitmap()
 void drawBitmap(int x, int y, const uint16_t bitmap[], int16_t w, int16_t h)
@@ -257,15 +292,43 @@ void writeBitmap(unsigned int x, unsigned int y, uint16_t color)
 
 
 
-
-
-
-
 /* BATTLESHIPS Methods */
 
 void drawGameboard()
 {
+	unsigned int i;
 	FillRectangle(0, 0, MAX_WIDTH, MAX_HEIGHT, 0, 61, 31);
+	
+	for(i = 1; i<=X_LINES; i++)
+		drawGameboardYLines(i);
+		
+	for(i = 1; i<=Y_LINES-1; i++)
+		drawGameboardXLines(i);
+	
+	
+}
+
+void drawGameboardYLines(unsigned int i)
+{
+	SetPageAddress(X_SQUARE*i,X_GAMEBOARD);
+	SetColumnAddress(0,Y_GAMEBOARD);
+	MemoryWrite();		
+	for(i = 0; i <= Y_GAMEBOARD; i++)
+		WritePixel(31, 63, 31);
+}
+
+
+void drawGameboardXLines(unsigned int i)
+{
+	SetPageAddress(0,X_GAMEBOARD);
+	SetColumnAddress(Y_SQUARE*i,Y_SQUARE*i);
+	MemoryWrite();		
+	for(i = 0; i <= X_GAMEBOARD; i++)
+		WritePixel(31, 63, 31);
+}
+
+void updateScreen()
+{
 	
 }
 
@@ -274,7 +337,14 @@ void drawStats()
 	
 }
 
-void drawShip();
-void drawMissiles();
+void drawShip()
+{
+	
+}
+
+void drawMissiles()
+{
+	
+}
 
 

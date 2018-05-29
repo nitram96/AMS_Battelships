@@ -34,6 +34,13 @@
 #define MAX_HEIGHT				240
 #define MAX_WIDTH				320
 
+#define X_SQUARE				33
+#define Y_SQUARE				32
+#define X_GAMEBOARD				267
+#define Y_GAMEBOARD				192
+#define X_LINES					8
+#define Y_LINES					6
+
 /* TFT Display Driver Methods */
 void DisplayInit();
 void AllPixelsOff();
@@ -53,10 +60,16 @@ void FillRectangle(unsigned int StartX, unsigned int StartY, unsigned int Width,
 void drawBitmap(int x, int y, const uint16_t bitmap[], int16_t w, int16_t h);
 void writeBitmap(unsigned int x, unsigned int y, uint16_t color);
 
+void drawLine(unsigned int StartX, unsigned int StartY, unsigned int EndX, 
+			  unsigned int EndY, unsigned char Red, unsigned char Green, unsigned char Blue);
+
 
 
 /* Battleships Game Methods */
 void drawGameboard();
+void drawGameboardYLines(unsigned int i);
+void drawGameboardXLines(unsigned int i);
+void updateScreen();
 void drawStats();
 void drawShip();
 void drawMissiles();
