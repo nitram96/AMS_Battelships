@@ -9,14 +9,28 @@
  
 #include <avr/io.h>
 #include "game.h"
+extern "C"{
+#include "Drivers/uart.h"
+};
 
 
 int main(void)
 {
-	gameBoard player(10,10);
+	
+	game xGame(false,10,10);
+	
+	char string[] = {"Connected"};
+	SendString(string);
 
-	player.addShip(0x25,0x28);
-	player.hit(0x26);	
+	xGame.player.addShip(0x25,0x28);
+	xGame.player.addShip(0x25,0x28);
+	xGame.player.addShip(0x25,0x28);
+	xGame.player.addShip(0x25,0x28);
+	xGame.player.addShip(0x25,0x28);
+	
+	xGame.ready();
+	xGame.waitForMissile();
+	xGame.shoot(0x0F);
 		
 }
 

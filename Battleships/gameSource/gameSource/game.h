@@ -12,13 +12,7 @@
 // enum to make it easier to read/work with the direction of the ship
 enum direction{north,south,east,west};
 
-class game
-{
-	
-	public:
-	void startGame(bool);
-	gameBoard player, opponent;	
-};
+
 
 class ship
 {
@@ -40,20 +34,33 @@ class ship
 
 class gameBoard
 {
+	
+	public:
 	uint8_t xSize, ySize;
 	uint8_t hitShips[17];
+	uint8_t enemyShips[17];
 	uint8_t missileHits;
 	uint8_t cordMissile[256];
 	uint8_t numberOfShips;
-	bool MOS;
-	ship *ships[5];
+	ship ships[5];
 	uint8_t turn;
-	public:
-	gameBoard(uint8_t, uint8_t,bool);
+	gameBoard(uint8_t x = 10, uint8_t y = 10);
 	void addShip(uint8_t,uint8_t);
 	bool hit(uint8_t);
 };
 
+class game
+{
+	
+	public:
+	game(bool, uint8_t x = 10, uint8_t y = 10);
+	int8_t ready(void);
+	void shoot(uint8_t coord);
+	void waitForMissile(void);
+	gameBoard player;
+	private:
+	bool MOS;
+};
 // class that we use as ships on the gameboard
 
 

@@ -42,35 +42,23 @@ void spiSlaveInit()
 	SPCR = (1<<SPE);              // SPI Enable
 }
 
-//void radioSend(uint8_t aByte)
-//{
-	//SPDR = aByte;
-	//while(!(SPSR & (1<<SPIF)));
-//}
-//
-//uint8_t radioRecieve(void)
-//{
-	//
-	//while(!(SPSR & (1<<SPIF)));
-	//return(SPDR);
-//}
 
-
-uint8_t spiTransmit(uint8_t dataout)
+uint8_t spiTransmit(uint8_t dataOut)
 {
-	SPDR = dataout;
+	SPDR = dataOut;
 	while(!(SPSR & (1<<SPIF)));
 	return SPDR;
 }
 
-uint8_t spiReceive(void)
+uint8_t spiReceive()
 {
+	SPDR = 0x00;
 	while(!(SPSR & (1<<SPIF)));
 	return SPDR;
 }
 
-void spiSend(uint8_t dataout)
+void spiSend(uint8_t dataOut)
 {
-	SPDR = dataout;
+	SPDR = dataOut;
 	while(!(SPSR & (1<<SPIF)));
 }

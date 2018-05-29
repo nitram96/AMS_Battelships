@@ -5,8 +5,8 @@
  *  Author: Martin
  */ 
 
-#include <avr/io.h>
 #include "helpFunc.h"
+#include <stdlib.h>
 
 uint8_t makeCord(uint8_t xCord,uint8_t yCord)
 {
@@ -62,3 +62,6 @@ int8_t compareYCord(uint8_t firstCord,uint8_t secondCord)
 	return -10;
 	
 }
+
+/**************************************************/
+

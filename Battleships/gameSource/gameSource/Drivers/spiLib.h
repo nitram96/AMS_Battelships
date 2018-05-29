@@ -10,18 +10,17 @@
 #ifndef SPI_H_
 #define SPI_H_
 
+#include <avr/io.h>
+
 #define ACK 0x7F
 #define NACK 0x8F
 #define READY 0x40
-
-#include <avr/io.h>
-#include <avr/interrupt.h>
-#include <avr/cpufunc.h>
+#define MISSILE 0x6F
 
 
 #define PORT_SPI  PORTB
 #define PIN_SPI	PINB
-#define MEGA
+#define UNO
 
 #ifdef UNO
 #define DDR_SPI     DDRB
@@ -39,12 +38,11 @@
 #define DD_SCK      DDB1
 #endif
 
-
 void spiMasterInit(void);
 void spiSlaveInit(void);
-uint8_t spiTransmit(uint8_t);
+uint8_t spiTransmit(uint8_t dataOut);
 uint8_t spiReceive(void);
-void spiSend(uint8_t);
+void spiSend(uint8_t dataOut);
 
 
 
