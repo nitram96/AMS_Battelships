@@ -107,7 +107,7 @@ unsigned char buttonPressed(unsigned short int x, unsigned short int y)
 	unsigned char button = 0;
 	switch(yPos)
 	{
-		case Y_LOWER_RANGE_MIN ... Y_LOWER_RANGE_MAX:
+		case Y_RANGE_MIN ... Y_RANGE_MAX:
 			switch(xPos)
 			{
 				case LEFT_RANGE_MIN ... LEFT_RANGE_MAX:
@@ -126,13 +126,24 @@ unsigned char buttonPressed(unsigned short int x, unsigned short int y)
 					button = 'R';
 					return button;
 			}
-	/*	case Y_UPPER_RANGE_MIN ... Y_UPPER_RANGE_MAX
-			switch(xPos)
-			{
-				case 
-			}*/
-		
 		default:
-			return button;	
+			break;	
+	}
+	
+	switch(xPos)
+	{
+		case X_RANGE_MIN ... X_RANGE_MAX:
+			switch(yPos)
+			{
+				case HIT_RANGE_MIN ... HIT_RANGE_MAX:
+					button = 'H';
+					return button;
+				
+				case ROTATE_RANGE_MIN ... ROTATE_RANGE_MAX:
+					button = 'T';
+					return button;
+			}
+		default:
+			return button;
 	}
 }

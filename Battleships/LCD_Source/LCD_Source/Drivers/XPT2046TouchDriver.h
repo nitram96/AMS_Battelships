@@ -28,10 +28,10 @@
 #define Y_CMD 0xD0
 
 // Buttons
-#define Y_LOWER_RANGE_MIN		0
-#define Y_LOWER_RANGE_MAX		27
-#define Y_UPPER_RANGE_MIN		
-#define Y_UPPER_RANGE_MAX		
+#define Y_RANGE_MIN				0
+#define Y_RANGE_MAX				27
+#define X_RANGE_MIN				9
+#define X_RANGE_MAX				22
 #define LEFT_RANGE_MIN			81
 #define LEFT_RANGE_MAX			100
 #define UP_RANGE_MIN			62
@@ -40,6 +40,10 @@
 #define DOWN_RANGE_MAX			61
 #define RIGHT_RANGE_MIN			24
 #define RIGHT_RANGE_MAX			42
+#define HIT_RANGE_MIN			78
+#define HIT_RANGE_MAX			94
+#define ROTATE_RANGE_MIN		56
+#define ROTATE_RANGE_MAX		77
 
 // Should be defined for all drivers (common include file)
 #define sbi(b,n) ((b) |= (1<<(n)))          // Set bit number n in byte b
