@@ -9,6 +9,7 @@
 #include <util/delay.h>
 #include "game.h"
 #include "helpFunc.h"
+#include <stdlib.h>
 extern "C"{
 #include "Drivers/uart.h"
 #include "Drivers/spiLib.h"
@@ -17,44 +18,74 @@ extern "C"{
 #include <stdlib.h>
 
 
-gameBoard::gameBoard(uint8_t _xSize, uint8_t _ySize)
+gameBoard::gameBoard()
 {
-	if (_xSize >> 15)
-		xSize = 15;
-	else
-		xSize = _xSize;
+		xSize = SIZE;
 	
-	if (_ySize >> 15)
-		ySize = 15;
-	else
-		ySize = _ySize;
+		ySize = SIZE;
 
-		memset(cordMissile,0,256);
-		memset(hitShips,0,17);
-		memset(enemyShips,0,17);
+		memset(playerField,0,SIZE*SIZE);
+		memset(cpuField,0,SIZE*SIZE);
 		numberOfShips = 0;
 		missileHits = 0;
 		turn = 0;
 	
-
-	
-	
-	
 }
 
-void gameBoard::addShip(uint8_t _startCord, uint8_t  _endCord)
+void gameBoard::addShip(uint8_t _startCord, uint8_t  _endCord, bool player)
 {
-	ships[numberOfShips++] = ship(_startCord,_endCord) ;
+	ships[numberOfShips] = ship(_startCord,_endCord);
+	
+	switch (ships[numberOfShips].dir)
+	{
+	case : north
+		for (int i = 0; i < ships[numberOfShips].HitPoints; i++)
+		{
+			if(player)
+				playerField[getXCord(_startCord)+i][getYCord(_startCord)] = SHIP;
+			else
+				cpuField[getXCord(_startCord)+i][getYCord(_startCord)] = SHIP;
+		}
+		break;
+	case : south
+		for (int i = 0; i < ships[numberOfShips].HitPoints; i++)
+		{
+			if(player)
+				playerField[getXCord(_startCord)-i][getYCord(_startCord)] = SHIP;
+			else
+				cpuField[getXCord(_startCord)-i][getYCord(_startCord)] = SHIP;
+		}
+		break;
+	case : east
+		for (int i = 0; i < ships[numberOfShips].HitPoints; i++)
+		{
+			if(player)
+				playerField[getXCord(_startCord)][getYCord(_startCord)+i] = SHIP;
+			else
+				cpuField[getXCord(_startCord)][getYCord(_startCord)+i] = SHIP;
+		}
+		break;
+	case : west
+		for (int i = 0; i < ships[numberOfShips].HitPoints; i++)
+		{
+			if(player)
+				playerField[getXCord(_startCord)][getYCord(_startCord)-i] = SHIP;
+			else
+				cpuField[getXCord(_startCord)][getYCord(_startCord)-i] = SHIP;
+		}
+		break;
+	}
+	numberOfShips++;
 }
 
 bool gameBoard::hit(uint8_t missileCord)
 {
-	cordMissile[turn-1] = missileCord;
+	
 	for(int i = 0; i < numberOfShips; i++)
 	{
 		if(ships[i].hit(missileCord))
 		{
-			hitShips[missileHits] = missileCord;
+			playerField[getXCord(missileCord)][getYCord(missileCord)] = HIT;
 			missileHits++;
 			turn++;	
 			return true;
@@ -62,6 +93,23 @@ bool gameBoard::hit(uint8_t missileCord)
 	}
 	turn++;
 	return false;
+}
+
+void gameBoard::startGame()
+{
+	uint8_t rng = (uint8_t) rand()%(ySize*xSize);
+	
+	for (uint8_t i = 0; i < gameBoard.xSize; i++)
+	{
+		for (uint8_t j = 0; j < gameBoard.ySize; j++)
+		{
+			for (uint8_t h = 0; h <= numberOfShips; h++)
+			{
+				if(playerField[i][j] != SHIP)
+					playerField[i][j] = ships[h].checkCord(makeCord(i,j)) ? SHIP : NO;
+			}
+		}
+	}
 }
 
 
@@ -186,153 +234,3 @@ bool ship::checkCord(uint8_t _cord)
 	}
 	
 }	
-
-game::game(bool master,uint8_t x, uint8_t y)
-{
-	MOS = master;
-	InitUART(9600,8);
-	if(master)
-	{
-		//player = gameBoard(x,y);
-		spiMasterInit();
-		SendChar(READY);
-		while(ReadChar() != ACK)
-		{
-			_delay_ms(10);
-			SendChar(READY);
-		}
-		SendChar(x);
-		while(ReadChar() != x)
-		{
-			_delay_ms(10);
-			SendChar(x);
-		}
-		SendChar(y);
-		while(ReadChar() != y)
-		{
-			_delay_ms(10);
-			SendChar(y);
-		}
-		_delay_ms(10);
-	}
-	else
-	{
-		spiSlaveInit();
-		while(ReadChar() != READY)
-		{
-			_delay_ms(10);
-			SendChar(NACK);
-		}
-		SendChar(ACK);
-		uint8_t xSize = ReadChar();
-		SendChar(xSize);
-		uint8_t ySize = ReadChar();
-		SendChar(ySize);
-		player = gameBoard(xSize,ySize);
-		SendChar('D');
-		
-	}
-	
-}
-
-int8_t game::ready()
-{
-	if(player.numberOfShips != 5)
-	return -1;
-	if(MOS)
-	{
-		
-		while(spiTransmit(READY) != ACK)
-		{
-			_delay_ms(1000);
-		}
-		return 1;
-	}
-	else
-	{
-		while(spiReceive() != READY)
-		{
-			_delay_ms(1000);
-		}
-		spiSend(ACK);
-		return 1;
-		
-	}
-}
-
-void game::shoot(uint8_t coord)
-{
-	if (MOS)
-	{
-		DDR_SPI &= ~(1<<DD_SS);
-		while(spiTransmit(MISSILE) != ACK)
-		{
-			_delay_ms(1);
-		}
-		uint8_t hit = spiTransmit(coord);
-		DDR_SPI |= (1<<DD_SS);
-		if(hit == ACK)
-		{
-			player.cordMissile[player.turn++] = coord;
-			player.enemyShips[player.missileHits++] = coord;
-		}
-		if(hit == NACK)
-		player.cordMissile[player.turn++] = coord;
-	}
-	else
-	{
-		while(spiTransmit(MISSILE) != ACK)
-		{
-			_delay_ms(1);
-		}
-		uint8_t hit = spiTransmit(coord);
-		while(hit != ACK && hit != NACK)
-		{
-			hit = spiTransmit(coord);
-		}
-		if(hit == ACK)
-		{
-			player.cordMissile[player.turn++] = coord;
-			player.enemyShips[player.missileHits++] = coord;
-		}
-		if(hit == NACK)
-		player.cordMissile[player.turn++] = coord;
-	}
-}
-
-void game::waitForMissile()
-{
-	if (MOS)
-	{
-		DDR_SPI &= ~(1<<DD_SS);
-		while(spiTransmit(ACK) != MISSILE)
-		{
-			_delay_ms(1);
-		}
-		if (player.hit(spiReceive()))
-		{
-			spiSend(ACK);
-		}
-		else
-		{
-			spiSend(NACK);
-		}
-		DDR_SPI |= (1<<DD_SS);
-	}
-	else
-	{
-		while(spiTransmit(ACK) != MISSILE)
-		{
-			_delay_ms(1);
-		}
-		if (player.hit(spiReceive()))
-		{
-			spiSend(ACK);
-		}
-		else
-		{
-			spiSend(NACK);
-		}
-		
-	}
-}

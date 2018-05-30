@@ -9,6 +9,11 @@
 #ifndef GAME_H_
 #define GAME_H_
 
+#define HIT 3
+#define MISS 2
+#define SHIP 1
+#define NO 0
+#define SIZE 10
 // enum to make it easier to read/work with the direction of the ship
 enum direction{north,south,east,west};
 
@@ -25,6 +30,7 @@ class ship
 	uint8_t HitPoints;
 	public:
 	ship(uint8_t,uint8_t);
+	ship(uint8_t,dir,uint8_t);
 	ship() : startCord(), endCord(){};
 	uint8_t getStartCord();
 	uint8_t getEndCord();
@@ -36,30 +42,18 @@ class gameBoard
 {
 	
 	public:
-	uint8_t xSize, ySize;
-	uint8_t hitShips[17];
-	uint8_t enemyShips[17];
 	uint8_t missileHits;
-	uint8_t cordMissile[256];
 	uint8_t numberOfShips;
 	ship ships[5];
 	uint8_t turn;
-	gameBoard(uint8_t x = 10, uint8_t y = 10);
-	void addShip(uint8_t,uint8_t);
+	gameBoard();
+	void addShip(uint8_t,uint8_t,bool);
 	bool hit(uint8_t);
-};
-
-class game
-{
-	
-	public:
-	game(bool, uint8_t x = 10, uint8_t y = 10);
-	int8_t ready(void);
-	void shoot(uint8_t coord);
-	void waitForMissile(void);
-	gameBoard player;
+	void startGame(void);
 	private:
-	bool MOS;
+	uint8_t playerField[SIZE][SIZE];
+	uint8_t cpuField[SIZE][SIZE];
+	uint8_t xSize, ySize;
 };
 // class that we use as ships on the gameboard
 
