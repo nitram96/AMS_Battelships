@@ -16,15 +16,6 @@ extern "C"{
 
 int main(void)
 {
-
-	gameBoard xGame;
-	ship tempShip(3);
-	tempShip.up();
-	tempShip.up();
-	tempShip.right();
-	tempShip.right();
-	tempShip.right();
-	tempShip.rotate();
 		
 }
 

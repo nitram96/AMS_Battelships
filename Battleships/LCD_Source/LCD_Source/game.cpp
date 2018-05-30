@@ -8,7 +8,6 @@
 #define F_CPU 16000000
 #include <util/delay.h>
 #include "game.h"
-#include "helpFunc.h"
 #include <stdlib.h>
 extern "C"{
 #include "Drivers/uart.h"
@@ -19,21 +18,15 @@ extern "C"{
 #include <stdlib.h>
 
 
-
-
-
-ship::ship(uint8_t len)
+void initShip(uint8_t* temp,uint8_t length)
 {
-	length = len;
-	for(int i = 0; i < len; i++)
+	for(int i = 0; i < length; i++)
 	{
-		coords[i] = makeCord(0,i);	
+		temp[i] = makeCord(0,i);
 	}
-	hitPoints = len;	
-	
 }
 
-bool ship::up()
+bool up(uint8_t* coords, uint8_t length)
 {
 	uint8_t temp[4];
 	for(int i = 0; i < length; i++)
@@ -51,7 +44,7 @@ bool ship::up()
 	return true;
 }
 
-bool ship::down()
+bool down(uint8_t* coords, uint8_t length)
 {
 	uint8_t temp[4];
 	for(int i = 0; i < length; i++)
@@ -69,7 +62,7 @@ bool ship::down()
 	return true;
 	
 }
-bool ship::left()
+bool left(uint8_t* coords, uint8_t length)
 {
 	uint8_t temp[4];
 	for(int i = 0; i < length; i++)
@@ -87,7 +80,7 @@ bool ship::left()
 	return true;
 	
 }
-bool ship::right()
+bool right(uint8_t* coords, uint8_t length)
 {
 	uint8_t temp[4];
 	for(int i = 0; i < length; i++)
@@ -106,7 +99,7 @@ bool ship::right()
 	
 }
 
-bool ship::rotate()
+bool rotate(uint8_t* coords, uint8_t length)
 {
 	
 	uint8_t temp[4];
@@ -125,22 +118,9 @@ bool ship::rotate()
 	return true;
 }
 
-
-bool ship::checkCord(uint8_t _cord)
-{
-	for(int i = 0; i < length; i++)
-	{
-		if (_cord == coords[i])
-		{
-			return true;
-		}
-	}
-	return false;
-	
-}
-
 gameBoard::gameBoard()
 {
+	
 	xSize = XSIZE;
 	
 	ySize = YSIZE;
@@ -153,37 +133,74 @@ gameBoard::gameBoard()
 	
 }
 
-bool gameBoard::placeShip(ship _ship, bool player)
+void gameBoard::startGame()
 {
-	for (int i = 0; i < _ship.length; i++)
+	
+	uint8_t temp[4];
+	for (int j = 4; j > 1; j--)
+	{
+		initShip(temp,j);
+		do 
+		{
+			for(int i = 0; i < 20; i++)
+			{
+				
+				switch (rand()%5)
+				{
+					case 0:
+						right(temp,j);
+						break;
+					case 1:
+						down(temp,j);
+						break;
+					case 2:
+						rotate(temp,j);
+						break;
+					case 3:
+						up(temp,j);
+						break;
+					case 4:
+						left(temp,j);
+						break;
+				}
+			}
+		
+		}
+		while(!placeShip(temp,j,false));
+	}
+}
+
+bool gameBoard::placeShip(uint8_t *coords,uint8_t length,bool player)
+{
+	for (int i = 0; i < length; i++)
 	{
 		if (player)
 		{
-			if (playerField[getXCord(_ship.coords[i])][getYCord(_ship.coords[i])] == SHIP)
+			if (playerField[getXCord(coords[i])][getYCord(coords[i])] == SHIP)
 			{
 				return false;
 			}
 		}
 		else
 		{
-			if (cpuField[getXCord(_ship.coords[i])][getYCord(_ship.coords[i])] == SHIP)
+			if (cpuField[getXCord(coords[i])][getYCord(coords[i])] == SHIP)
 			{
 				return false;
 			}
 		}		
 	}
-	for (int i = 0; i < _ship.length; i++)
+	for (int i = 0; i < length; i++)
 	{
 		if (player)
 		{
-			playerField[getXCord(_ship.coords[i])][getYCord(_ship.coords[i])] = SHIP;
+			playerField[getXCord(coords[i])][getYCord(coords[i])] = SHIP;
 		}
 		else
 		{
-			cpuField[getXCord(_ship.coords[i])][getYCord(_ship.coords[i])] = SHIP;
+			cpuField[getXCord(coords[i])][getYCord(coords[i])] = SHIP;
 		}
 	}
-	
+	return true;
 }
 
 bool gameBoard::hit(uint8_t missileCord,bool player)
@@ -217,36 +234,3 @@ bool gameBoard::hit(uint8_t missileCord,bool player)
 	}
 }
 
-void gameBoard::startGame()
-{
-	uint8_t rng = (uint8_t) rand()%(YSIZE*XSIZE);
-	
-	ship Tempship(4);
-	for (int j = 4; j > 1; j--)
-	{
-		Tempship = ship(j);
-		for(int i = 0; i < 20; i++)
-		{
-			
-			switch (rand()%5)
-			{
-				case 0:
-				Tempship.right();
-				break;
-				case 1:
-				Tempship.down();
-				break;
-				case 2:
-				Tempship.rotate();
-				break;
-				case 3:
-				Tempship.up();
-				break;
-				case 4:
-				Tempship.left();
-				break;
-			}
-		}
-		placeShip(Tempship,false);
-	}
-}

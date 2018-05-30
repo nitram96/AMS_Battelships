@@ -18,6 +18,8 @@ extern "C"{
 
 int main(void)
 {
+	gameBoard xGame;
+	
 	bool touchDataReady;
 	unsigned char button;
 	
@@ -29,12 +31,12 @@ int main(void)
 	
 	// Draw Gameboard and buttons
 	drawGameboard();
-	drawBitmap(0, 192, left, 66, 48);
-	drawBitmap(67, 192, up, 66, 48);
-	drawBitmap(134, 192, down, 66, 48);
-	drawBitmap(201, 192, right, 66, 48);
-	drawBitmap(267,0, hit, 53, 53);
-	drawBitmap(267,53, rotate, 53, 53);
+	drawBitmap(0, 192, leftBMP, 66, 48);
+	drawBitmap(67, 192, upBMP, 66, 48);
+	drawBitmap(134, 192, downBMP, 66, 48);
+	drawBitmap(201, 192, rightBMP, 66, 48);
+	drawBitmap(267,0, hitBMP, 53, 53);
+	drawBitmap(267,53, rotateBMP, 53, 53);
 	//drawBitmap(201, 192, ship, 24, 11);
 	
 	SendChar(12);

@@ -183,7 +183,7 @@ bool gameBoard::placeShip(ship _ship,bool player)
 			cpuField[getXCord(_ship.coords[i])][getYCord(_ship.coords[i])] = SHIP;
 		}
 	}
-	
+	return true;
 }
 
 bool gameBoard::hit(uint8_t missileCord,bool player)
@@ -219,7 +219,6 @@ bool gameBoard::hit(uint8_t missileCord,bool player)
 
 void gameBoard::startGame()
 {
-	uint8_t rng = (uint8_t) rand()%(YSIZE*XSIZE);
 	
 	ship Tempship(4);
 	for (int j = 4; j > 1; j--)

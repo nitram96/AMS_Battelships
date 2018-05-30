@@ -15,8 +15,7 @@
 #define NO 0
 #define XSIZE 8
 #define YSIZE 6
-// enum to make it easier to read/work with the direction of the ship
-enum direction{north,south,east,west};
+
 
 
 

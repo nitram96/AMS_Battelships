@@ -30,4 +30,6 @@ int8_t compareXCord(uint8_t,uint8_t);
 //compares the 4 MSB of the first cordinate with the 4 MSB of the second cordinate and returns >0 if the first is biggest <0 if the first is smallest and 0 if they are the same
 int8_t compareYCord(uint8_t,uint8_t);
 
+
+
 #endif /* HELPFUNC_H_ */
