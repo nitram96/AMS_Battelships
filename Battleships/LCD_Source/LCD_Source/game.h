@@ -23,20 +23,19 @@ enum direction{north,south,east,west};
 class ship
 {
 	// coordinates expressed as a unsigned int 8 bit long, 4 MSB is y coordinate and 4 LSB is x coordinate
-	uint8_t coords[4];
 	//boolean that expresses whether or not the ship has been sunk
 	bool sunk;
 	bool checkCord(uint8_t);
+	public:
+	uint8_t coords[4];
 	uint8_t length;
 	uint8_t hitPoints;
-	public:
 	ship(uint8_t);
 	bool up(void);
 	bool down(void);
 	bool right(void);
 	bool left(void);
 	bool rotate(void);
-	bool hit(uint8_t);
 };
 
 class gameBoard
@@ -47,8 +46,8 @@ class gameBoard
 	uint8_t numberOfShips;
 	uint8_t turn;
 	gameBoard();
-	void addShip(uint8_t,uint8_t,bool);
-	bool hit(uint8_t);
+	bool placeShip(ship, bool);
+	bool hit(uint8_t,bool);
 	void startGame(void);
 	private:
 	uint8_t playerField[XSIZE][YSIZE];
