@@ -294,7 +294,7 @@ void writeBitmap(unsigned int x, unsigned int y, uint16_t color)
 
 /* BATTLESHIPS Methods */
 
-void drawGameboard()
+/*void drawGameboard()
 {
 	unsigned int i;
 	FillRectangle(0, 0, MAX_WIDTH, MAX_HEIGHT, 0, 61, 31);
@@ -304,9 +304,7 @@ void drawGameboard()
 		
 	for(i = 1; i<=Y_LINES-1; i++)
 		drawGameboardXLines(i);
-	
-	
-}
+}*/
 
 void drawGameboardYLines(unsigned int i)
 {

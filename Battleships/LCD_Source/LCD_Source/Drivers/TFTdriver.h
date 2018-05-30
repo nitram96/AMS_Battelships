@@ -67,7 +67,7 @@ void drawLine(unsigned int StartX, unsigned int StartY, unsigned int EndX,
 
 
 /* Battleships Game Methods */
-void drawGameboard();
+//void drawGameboard();
 void drawGameboardYLines(unsigned int i);
 void drawGameboardXLines(unsigned int i);
 void updateScreen();

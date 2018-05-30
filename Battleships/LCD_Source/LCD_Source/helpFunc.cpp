@@ -27,27 +27,24 @@ uint8_t addCord(uint8_t Cord,uint8_t sub,uint8_t Y)
 	{
 		if (Y)
 		{
-			temp &= 0x0F;
-			temp |= (Cord << 4)-1;
+			temp = Cord-0x10;
 		}
 		else
 		{
-			temp &= 0xF0;
-			temp |= (Cord & 0x0F)-1;
+			temp = Cord-1;
 		}
 	}
 	else
+	{
 		if (Y)
 		{
-			temp &= 0x0F;
-			temp |= (Cord << 4)+1;
+			temp = Cord+0x10;
 		}
 		else
 		{
-			temp &= 0xF0;
-			temp |= (Cord & 0x0F)+1;
+			temp = Cord+1;
 		}
-	
+	}
 	return temp;
 }
 

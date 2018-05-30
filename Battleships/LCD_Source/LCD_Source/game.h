@@ -10,7 +10,12 @@
 #define GAME_H_
 #include <avr/io.h>
 #include "helpFunc.h"
-
+extern "C"{
+#include "Drivers/TFTdriver.h"
+#include "Drivers/XPT2046TouchDriver.h"
+};
+#define SHIPANDHIT 5
+#define SHIPANDMISS 4
 #define HIT 3
 #define MISS 2
 #define SHIP 1
@@ -24,16 +29,20 @@
 
 class gameBoard
 {
-	
 	public:
 	uint8_t missileHits;
+	uint8_t cpuMissiles;
 	uint8_t numberOfShips;
 	uint8_t turn;
+	bool started = false;
+	bool opponent = false;
 	gameBoard();
 	void startGame(void);
 	bool placeShip(uint8_t*, uint8_t, bool);
 	bool hit(uint8_t,bool);
+	void drawGameboard(uint8_t* = 0, uint8_t length = 0);
 	private:
+	void won(bool player);
 	uint8_t playerField[XSIZE][YSIZE];
 	uint8_t cpuField[XSIZE][YSIZE];
 	uint8_t xSize, ySize;
