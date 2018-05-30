@@ -20,6 +20,10 @@ uint8_t getXCord(uint8_t);
 //returns the 4 MSB
 uint8_t getYCord(uint8_t);
 
+uint8_t addCord(uint8_t,uint8_t sub = 0, uint8_t Y = 0);
+
+
+
 //compares the 4 LSB of the first cordinate with the 4 LSB of the second cordinate and returns >0 if the first is biggest <0 if the first is smallest and 0 if they are the same
 int8_t compareXCord(uint8_t,uint8_t);
 

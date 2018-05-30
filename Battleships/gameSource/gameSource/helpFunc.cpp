@@ -10,13 +10,45 @@
 
 uint8_t makeCord(uint8_t xCord,uint8_t yCord)
 {
-	uint8_t temp = 0xFF;
+	uint8_t temp = 0x00;
 	
 	temp = (xCord & 0x0F);
 	temp |= (yCord << 4);
 	
 	return temp;
 }
+
+uint8_t addCord(uint8_t Cord,uint8_t sub,uint8_t Y)
+{
+	uint8_t temp = Cord;
+	if (sub)
+	{
+		if (Y)
+		{
+			temp &= 0x0F;
+			temp |= (Cord << 4)-1;
+		}
+		else
+		{
+			temp &= 0xF0;
+			temp |= (Cord & 0x0F)-1;
+		}
+	}
+	else
+		if (Y)
+		{
+			temp &= 0x0F;
+			temp |= (Cord << 4)+1;
+		}
+		else
+		{
+			temp &= 0xF0;
+			temp |= (Cord & 0x0F)+1;
+		}
+	
+	return temp;
+}
+
 
 uint8_t getXCord(uint8_t cord)
 {

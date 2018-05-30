@@ -16,21 +16,7 @@ extern "C"{
 
 int main(void)
 {
-	
-	game xGame(false,10,10);
-	
-	char string[] = {"Connected"};
-	SendString(string);
 
-	xGame.player.addShip(0x25,0x28);
-	xGame.player.addShip(0x25,0x28);
-	xGame.player.addShip(0x25,0x28);
-	xGame.player.addShip(0x25,0x28);
-	xGame.player.addShip(0x25,0x28);
-	
-	xGame.ready();
-	xGame.waitForMissile();
-	xGame.shoot(0x0F);
 		
 }
 

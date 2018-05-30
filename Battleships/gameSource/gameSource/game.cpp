@@ -20,153 +20,130 @@ extern "C"{
 #include <stdlib.h>
 
 
-gameBoard::gameBoard()
-{
-		xSize = SIZE;
-	
-		ySize = SIZE;
 
-		memset(playerField,0,SIZE*SIZE);
-		memset(cpuField,0,SIZE*SIZE);
-		numberOfShips = 0;
-		missileHits = 0;
-		turn = 0;
-	
-}
 
-void gameBoard::addShip(uint8_t _startCord, uint8_t  _endCord, bool player)
+
+ship::ship(uint8_t len)
 {
-	ships[numberOfShips] = ship(_startCord,_endCord);
-	
-	switch (ships[numberOfShips].dir)
+	length = len;
+	for(int i = 0; i < len; i++)
 	{
-	case : north
-		for (int i = 0; i < ships[numberOfShips].HitPoints; i++)
-		{
-			if(player)
-				playerField[getXCord(_startCord)+i][getYCord(_startCord)] = SHIP;
-			else
-				cpuField[getXCord(_startCord)+i][getYCord(_startCord)] = SHIP;
-		}
-		break;
-	case : south
-		for (int i = 0; i < ships[numberOfShips].HitPoints; i++)
-		{
-			if(player)
-				playerField[getXCord(_startCord)-i][getYCord(_startCord)] = SHIP;
-			else
-				cpuField[getXCord(_startCord)-i][getYCord(_startCord)] = SHIP;
-		}
-		break;
-	case : east
-		for (int i = 0; i < ships[numberOfShips].HitPoints; i++)
-		{
-			if(player)
-				playerField[getXCord(_startCord)][getYCord(_startCord)+i] = SHIP;
-			else
-				cpuField[getXCord(_startCord)][getYCord(_startCord)+i] = SHIP;
-		}
-		break;
-	case : west
-		for (int i = 0; i < ships[numberOfShips].HitPoints; i++)
-		{
-			if(player)
-				playerField[getXCord(_startCord)][getYCord(_startCord)-i] = SHIP;
-			else
-				cpuField[getXCord(_startCord)][getYCord(_startCord)-i] = SHIP;
-		}
-		break;
+		coords[i] = makeCord(0,i);	
 	}
-	numberOfShips++;
+	hitPoints = len;
+	
+	//sunk = false;
+	//if (compareXCord(startCord,endCord) == 0)
+	//{
+		//if(compareYCord(startCord,endCord) == 1){
+			//dir = south;
+			//HitPoints = getYCord(startCord)-getYCord(endCord)+1;
+		//}
+		//else{
+			//dir = north;
+			//HitPoints = getYCord(endCord)-getYCord(startCord)+1;
+		//}
+	//}
+	//else
+	//{
+		//if(compareXCord(startCord,endCord) == 1){
+			//dir = west;
+			//HitPoints = getXCord(startCord)-getXCord(endCord)+1;
+		//}
+		//else{
+			//dir = east;
+			//HitPoints = getXCord(endCord)-getXCord(startCord)+1;
+		//}
+	//}
+	
+	
+	
 }
 
-bool gameBoard::hit(uint8_t missileCord)
+bool ship::up()
 {
-	
-	for(int i = 0; i < numberOfShips; i++)
+	uint8_t temp[4];
+	for(int i = 0; i < length; i++)
 	{
-		if(ships[i].hit(missileCord))
+		temp[i] = addCord(coords[i],0,1);
+		if (getYCord(temp[i]) >= YSIZE || getYCord(temp[i]) < 0)
 		{
-			playerField[getXCord(missileCord)][getYCord(missileCord)] = HIT;
-			missileHits++;
-			turn++;	
-			return true;
+			return false;
 		}
 	}
-	turn++;
-	return false;
+	for (int i = 0; i < length; i++)
+	{
+		coords[i] = temp[i];
+	}
+	return true;
 }
 
-void gameBoard::startGame()
+bool ship::down()
 {
-	uint8_t rng = (uint8_t) rand()%(ySize*xSize);
-	
-	for (uint8_t i = 0; i < gameBoard.xSize; i++)
+	uint8_t temp[4];
+	for(int i = 0; i < length; i++)
 	{
-		for (uint8_t j = 0; j < gameBoard.ySize; j++)
+		temp[i] = addCord(coords[i],1,1);
+		if (getYCord(temp[i]) >= YSIZE || getYCord(temp[i]) < 0)
 		{
-			for (uint8_t h = 0; h <= numberOfShips; h++)
-			{
-				if(playerField[i][j] != SHIP)
-					playerField[i][j] = ships[h].checkCord(makeCord(i,j)) ? SHIP : NO;
-			}
+			return false;
 		}
 	}
-}
-
-
-ship::ship(uint8_t _startCord, uint8_t _endCord)
-{
-	startCord = _startCord;
-	endCord = _endCord;
-	sunk = false;
-	if (compareXCord(startCord,endCord) == 0)
+	for (int i = 0; i < length; i++)
 	{
-		if(compareYCord(startCord,endCord) == 1){
-			dir = south;
-			HitPoints = getYCord(startCord)-getYCord(endCord)+1;
-		}
-		else{
-			dir = north;
-			HitPoints = getYCord(endCord)-getYCord(startCord)+1;
-		}
+		coords[i] = temp[i];
 	}
-	else
+	return true;
+	
+}
+bool ship::left()
+{
+	uint8_t temp[4];
+	for(int i = 0; i < length; i++)
 	{
-		if(compareXCord(startCord,endCord) == 1){
-			dir = west;
-			HitPoints = getXCord(startCord)-getXCord(endCord)+1;
-		}
-		else{
-			dir = east;
-			HitPoints = getXCord(endCord)-getXCord(startCord)+1;
+		temp[i] = addCord(coords[i],1,0);
+		if (getXCord(temp[i]) >= XSIZE || getXCord(temp[i]) < 0)
+		{
+			return false;
 		}
 	}
-	
-	
+	for (int i = 0; i < length; i++)
+	{
+		coords[i] = temp[i];
+	}
+	return true;
 	
 }
-uint8_t ship::getStartCord()
+bool ship::right()
 {
-	return startCord;
+	uint8_t temp[4];
+	for(int i = 0; i < length; i++)
+	{
+		temp[i] = addCord(coords[i],0,0);
+		if (getXCord(temp[i]) >= XSIZE || getXCord(temp[i]) < 0)
+		{
+			return false;
+		}
+	}
+	for (int i = 0; i < length; i++)
+	{
+		coords[i] = temp[i];
+	}
+	return true;
+	
 }
 
-uint8_t ship::getEndCord()
+bool ship::rotate()
 {
-	return endCord;
+	return true;
 }
 
-void ship::changeCord(uint8_t _startCord,uint8_t _endCord)
-{
-	startCord = _startCord;
-	endCord = _endCord;
-}
 
 bool ship::hit(uint8_t missilCord)
 {
 	if (checkCord(missilCord)){
-		HitPoints -= 1;
-		if(HitPoints == 0)
+		hitPoints -= 1;
+		if(hitPoints == 0)
 			sunk = true;
 		return true;
 	}
@@ -176,63 +153,89 @@ bool ship::hit(uint8_t missilCord)
 
 bool ship::checkCord(uint8_t _cord)
 {
-	switch(dir)
+	for(int i = 0; i < length; i++)
 	{
-		case north:
-			if(compareXCord(startCord,_cord) == 0)
-			{
-				if(compareYCord(_cord,startCord) == -1)
-					return false;
-				else
-				if(compareYCord(_cord,endCord) == 1)
-					return false;
-				else
-					return true;
-			}
-			else
-				return false;
-		
-		case south:
-			if(compareXCord(startCord,_cord) == 0)
-			{
-				if(compareYCord(_cord,startCord) == 1)
-					return false;
-				else
-				if(compareYCord(_cord,endCord) == -1)
-					return false;
-				else
-					return true;
-			}
-			else
-				return false;
-		case east:
-			if(compareYCord(startCord,_cord) == 0)
-			{
-				if(compareXCord(_cord,startCord) == -1)
-					return false;
-				else
-				if(compareXCord(_cord,endCord) == 1)
-					return false;
-				else
-					return true;
-			}
-			else
-				return false;
-		case west:
-			if(compareYCord(startCord,_cord) == 0)
-			{
-				if(compareXCord(_cord,startCord) == 1)
-					return false;
-				else
-				if(compareXCord(_cord,endCord) == -1)
-					return false;
-				else
-					return true;
-			}
-			else
-				return false;
-		default:
-			return false;
+		if (_cord == coords[i])
+		{
+			return true;
+		}
 	}
+	return false;
 	
-}	
+}
+
+gameBoard::gameBoard()
+{
+	xSize = XSIZE;
+	
+	ySize = YSIZE;
+
+	memset(playerField,0,XSIZE*YSIZE);
+	memset(cpuField,0,XSIZE*YSIZE);
+	numberOfShips = 0;
+	missileHits = 0;
+	turn = 0;
+	
+}
+
+void gameBoard::addShip(uint8_t _startCord, uint8_t  _endCord, bool player)
+{
+	//ships[numberOfShips] = ship(_startCord);
+	//
+	//switch (ships[numberOfShips].dir)
+	//{
+	//case north:
+	//for (int i = 0; i < ships[numberOfShips].HitPoints; i++)
+	//{
+	//if(player)
+	//playerField[getXCord(_startCord)+i][getYCord(_startCord)] = SHIP;
+	//else
+	//cpuField[getXCord(_startCord)+i][getYCord(_startCord)] = SHIP;
+	//}
+	//break;
+	//case south:
+	//for (int i = 0; i < ships[numberOfShips].HitPoints; i++)
+	//{
+	//if(player)
+	//playerField[getXCord(_startCord)-i][getYCord(_startCord)] = SHIP;
+	//else
+	//cpuField[getXCord(_startCord)-i][getYCord(_startCord)] = SHIP;
+	//}
+	//break;
+	//case east:
+	//for (int i = 0; i < ships[numberOfShips].HitPoints; i++)
+	//{
+	//if(player)
+	//playerField[getXCord(_startCord)][getYCord(_startCord)+i] = SHIP;
+	//else
+	//cpuField[getXCord(_startCord)][getYCord(_startCord)+i] = SHIP;
+	//}
+	//break;
+	//case west:
+	//for (int i = 0; i < ships[numberOfShips].HitPoints; i++)
+	//{
+	//if(player)
+	//playerField[getXCord(_startCord)][getYCord(_startCord)-i] = SHIP;
+	//else
+	//cpuField[getXCord(_startCord)][getYCord(_startCord)-i] = SHIP;
+	//}
+	//break;
+	//case default:
+	//break;
+	//}
+	//numberOfShips++;
+}
+
+bool gameBoard::hit(uint8_t missileCord)
+{
+	
+	turn++;
+	return false;
+}
+
+void gameBoard::startGame()
+{
+	uint8_t rng = (uint8_t) rand()%(ySize*xSize);
+	
+	
+}
