@@ -13,6 +13,8 @@
 extern "C"{
 #include "Drivers/uart.h"
 #include "Drivers/spiLib.h"
+#include "Drivers/TFTdriver.h"
+#include "Drivers/XPT2046TouchDriver.h"
 };
 #include <string.h>
 #include <stdlib.h>
