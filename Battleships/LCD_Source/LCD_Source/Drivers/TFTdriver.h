@@ -70,10 +70,6 @@ void drawLine(unsigned int StartX, unsigned int StartY, unsigned int EndX,
 //void drawGameboard();
 void drawGameboardYLines(unsigned int i);
 void drawGameboardXLines(unsigned int i);
-void updateScreen();
-void drawStats();
-void drawShip();
-void drawMissiles();
 // More?
 
 

@@ -325,24 +325,5 @@ void drawGameboardXLines(unsigned int i)
 		WritePixel(31, 63, 31);
 }
 
-void updateScreen()
-{
-	
-}
-
-void drawStats()
-{
-	
-}
-
-void drawShip()
-{
-	
-}
-
-void drawMissiles()
-{
-	
-}
 
 
